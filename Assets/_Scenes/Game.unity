@@ -155,7 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1.59
   direction: 0
-  rayCount: 2
+  rayCount: 3
   collisionLayer:
     serializedVersion: 2
     m_Bits: 4294967295
