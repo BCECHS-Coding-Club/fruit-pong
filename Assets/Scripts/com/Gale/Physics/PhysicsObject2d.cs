@@ -8,7 +8,7 @@ namespace com.Gale.Physics
     
 
     [RequireComponent(typeof(CircleCollider2D))]
-    public class CirclePhysicsObject2D : MonoBehaviour, IPhysicsObject
+    public class CirclePhysicsObject2D2D : MonoBehaviour, IPhysicsObject2D
     {
         public float Speed { get; private set; }
         
@@ -23,6 +23,11 @@ namespace com.Gale.Physics
         }
 
         public void OnPhysicsUpdate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void AddVelocity(Vector2 translation)
         {
             throw new NotImplementedException();
         }

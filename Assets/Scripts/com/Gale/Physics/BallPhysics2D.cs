@@ -1,34 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using NUnit.Framework;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace com.Gale.Physics
 {
     [RequireComponent(typeof(CircleCollider2D))]
-    public class BallPhysics2D : MonoBehaviour, IPhysicsObject
+    public class BallPhysics2D : MonoBehaviour, IPhysicsObject2D
     {
         // Arbitrary number so that the ball doesn't collide with itself
         private static float skinWidth = 0.05f;
 
-        public float moveSpeed = 0.0f;
-
-        // This is better of only used internally, maybe should be private
-        public float direction;
+        [SerializeField]
+        private float _moveSpeed = 0.0f;
+        
+        public float MoveSpeed
+        {
+            get => _moveSpeed;
+            set
+            {
+                _moveSpeed = value;
+                velocity = velocity.normalized * value;
+            }
+        }
 
         // Extra rays. 1 ray are always guaranteed to be cast.
         [SerializeField] private int rayCount = 1;
 
         [SerializeField] private LayerMask collisionLayer;
 
-        private Vector2 _velocity = new Vector2(1f, 1f);
+        [SerializeField]
+        public Vector2 velocity = Vector2.zero;
 
-        [SerializeField] CircleCollider2D collider;
+        [SerializeField] private CircleCollider2D circleCol;
 
         private void Start()
         {
-            collider = GetComponent<CircleCollider2D>();
+            circleCol = GetComponent<CircleCollider2D>();
+            velocity = GetRandomAngle() * MoveSpeed;
         }
 
         public void Move(Vector2 translation)
@@ -36,9 +45,50 @@ namespace com.Gale.Physics
             throw new System.NotImplementedException();
         }
 
+        private void FixedUpdate()
+        {
+            OnPhysicsUpdate();
+        }
+
         public void OnPhysicsUpdate()
         {
-            throw new System.NotImplementedException();
+            var angle = Mathf.Deg2Rad * Vector2.Angle(Vector2.right, velocity);
+            var (hitDistance, hitNormal) = CastRays();
+
+            if (hitDistance >= 0.0f)
+            {
+                // We've hit an object.
+                
+                // The distance to the object
+                var tempDistance = new Vector2(Mathf.Cos(angle) * hitDistance, Mathf.Sin(angle) * hitDistance);
+                // The velocity after we've hit the object.
+                var tempVelocity = velocity - tempDistance;
+                
+                // TODO this reflect vector isn't correct for some reason.
+                var reflectVector = Vector2.Reflect(tempVelocity, hitNormal.normalized);
+                // Move to the collided object, then by the tempVelocity
+                transform.position += new Vector3(tempDistance.x, tempDistance.y);
+
+                velocity = reflectVector.normalized * MoveSpeed;
+            }
+            else
+            {
+                // We haven't hit anything.
+                transform.position += new Vector3(velocity.x, velocity.y);
+            }
+        }
+
+        public void AddVelocity(Vector2 translation)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Vector2 GetRandomAngle()
+        {
+            // Normalizing the Vector might be redundant.
+            // TODO clamp this within a certain bound so that the ball doesn't travel straight up or down.
+            return new Vector2(Mathf.Cos(Random.Range(-2f * Mathf.PI, 2f * Mathf.PI)),
+                Mathf.Sin(Random.Range(-2f * Mathf.PI, 2f * Mathf.PI))).normalized;
         }
 
         private void OnDrawGizmos()
@@ -49,53 +99,61 @@ namespace com.Gale.Physics
             var rayTotal = 2 * rayCount;
             var position = transform.position;
 
-            var velocityAngle = Vector2.Angle(Vector2.right, _velocity) * Mathf.Deg2Rad;
+            var velocityAngle = Vector2.Angle(Vector2.right, velocity) * Mathf.Deg2Rad;
            
             Gizmos.color = Color.green;
-            Gizmos.DrawLine(position, new Vector3(position.x + Mathf.Cos(velocityAngle) * collider.radius * 2,
-                position.y + Mathf.Sin(velocityAngle) * collider.radius * 2));
+            Gizmos.DrawLine(position, new Vector3(position.x + Mathf.Cos(velocityAngle) * circleCol.radius * 2,
+                position.y + Mathf.Sin(velocityAngle) * circleCol.radius * 2));
  
             // TODO switch to Vector2.Perpendicular
-            var perpendicularAngle = Vector2.Angle(Vector2.right, _velocity) * Mathf.Deg2Rad + Mathf.PI / 2;
-            Gizmos.DrawLine(position, new Vector3(position.x + Mathf.Cos(perpendicularAngle) * collider.radius,
-                position.y + Mathf.Sin(perpendicularAngle) * collider.radius));
+            var perpendicularAngle = Vector2.Angle(Vector2.right, velocity) * Mathf.Deg2Rad + Mathf.PI / 2;
+            Gizmos.DrawLine(position, new Vector3(position.x + Mathf.Cos(perpendicularAngle) * circleCol.radius,
+                position.y + Mathf.Sin(perpendicularAngle) * circleCol.radius));
             
             for (var i = 0; i <= rayTotal; i++)
             {
-                var radDirection = Vector2.Angle(Vector2.up, _velocity) * Mathf.Deg2Rad;
+                var radDirection = Vector2.Angle(Vector2.up, velocity) * Mathf.Deg2Rad;
                 var angle =  (Mathf.PI / rayTotal * i) - radDirection;
 
                 
-                var startPoint = new Vector2(Mathf.Cos(angle) * collider.radius + position.x,
-                    Mathf.Sin(angle) * collider.radius + position.y);
+                var startPoint = new Vector2(Mathf.Cos(angle) * circleCol.radius + position.x,
+                    Mathf.Sin(angle) * circleCol.radius + position.y);
 
                 Gizmos.color = Color.red;
-                Gizmos.DrawLine(new Vector3(startPoint.x, startPoint.y, 0), new Vector3(startPoint.x + _velocity.x, startPoint.y +_velocity.y, 0));
+                Gizmos.DrawLine(new Vector3(startPoint.x, startPoint.y, 0), new Vector3(startPoint.x + velocity.x, startPoint.y +velocity.y, 0));
 
             }
         }
-
-        // TODO radDirection should be phased out for Vector2.Direction
-        private float CastRays(float radDirection)
+        
+        // the distance to the object and the normal (if hit)
+        private (float, Vector2) CastRays()
         {
             // Equation for raycast origin:
             // Vector2(cos(rayAngle - velocityAngle), sin(rayAngle - velocityAngle)) * radius + skin
             var rayTotal = 2 * rayCount + 1;
             var position = transform.position;
+            var radDirection = Vector2.Angle(Vector2.right, velocity) * Mathf.Deg2Rad;
 
             var hitDistance = -1.0f;
+            var hitNormal = Vector2.zero;
             
             for (var i = 1; i <= rayTotal; i++)
             {
                 var rayAngle =  Mathf.PI / i;
 
-                var startPoint = new Vector2(Mathf.Cos(rayAngle + radDirection) * collider.radius + skinWidth + position.x,
-                    Mathf.Sin(rayAngle - radDirection) * collider.radius + skinWidth + position.y);
+                var startPoint = new Vector2(Mathf.Cos(rayAngle + radDirection) * circleCol.radius + skinWidth + position.x,
+                    Mathf.Sin(rayAngle - radDirection) * circleCol.radius + skinWidth + position.y);
 
-                var ray = Physics2D.Raycast(startPoint, _velocity.normalized, _velocity.magnitude, collisionLayer);
+                var ray = Physics2D.Raycast(startPoint, velocity.normalized, velocity.magnitude, collisionLayer);
+
+                if (ray.collider && hitDistance < ray.distance)
+                {
+                    hitDistance = ray.distance;
+                    hitNormal = ray.normal;
+                }
             }
 
-            return hitDistance;
+            return (hitDistance, hitNormal);
         }
     }
 }

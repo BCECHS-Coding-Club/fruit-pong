@@ -12,10 +12,12 @@ namespace com.Gale.Player
             throw new NotImplementedException();
         }
 
+        /*
         private void FixedUpdate()
         {
             // Move the paddle
             throw new NotImplementedException();
         }
+        */
     }
 }
