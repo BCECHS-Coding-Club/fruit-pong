@@ -1,6 +1,8 @@
 {
     "name": "com.gale",
-    "references": [],
+    "references": [
+        "GUID:93889994d9c95414198cbafc73488b81"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

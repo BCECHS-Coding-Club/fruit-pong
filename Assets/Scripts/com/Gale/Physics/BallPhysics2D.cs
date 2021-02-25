@@ -52,7 +52,7 @@ namespace com.Gale.Physics
 
         public void OnPhysicsUpdate()
         {
-            var angle = Mathf.Deg2Rad * Vector2.Angle(Vector2.right, velocity);
+            var angle = Mathf.Deg2Rad * Vector2.Angle(Vector2.right, velocity.normalized);
             var (hitDistance, hitNormal) = CastRays();
 
             if (hitDistance >= 0.0f)
@@ -64,10 +64,9 @@ namespace com.Gale.Physics
                 // The velocity after we've hit the object.
                 var tempVelocity = velocity - tempDistance;
                 
-                // TODO this reflect vector isn't correct for some reason.
-                var reflectVector = Vector2.Reflect(tempVelocity, hitNormal.normalized);
+                var reflectVector = Vector2.Reflect(tempVelocity, hitNormal);
                 // Move to the collided object, then by the tempVelocity
-                transform.position += new Vector3(tempDistance.x, tempDistance.y);
+                transform.position += new Vector3(tempDistance.x, tempDistance.y) + new Vector3(reflectVector.x, reflectVector.y);
 
                 velocity = reflectVector.normalized * MoveSpeed;
             }
@@ -115,13 +114,11 @@ namespace com.Gale.Physics
                 var radDirection = Vector2.Angle(Vector2.up, velocity) * Mathf.Deg2Rad;
                 var angle =  (Mathf.PI / rayTotal * i) - radDirection;
 
-                
                 var startPoint = new Vector2(Mathf.Cos(angle) * circleCol.radius + position.x,
                     Mathf.Sin(angle) * circleCol.radius + position.y);
 
                 Gizmos.color = Color.red;
                 Gizmos.DrawLine(new Vector3(startPoint.x, startPoint.y, 0), new Vector3(startPoint.x + velocity.x, startPoint.y +velocity.y, 0));
-
             }
         }
         
