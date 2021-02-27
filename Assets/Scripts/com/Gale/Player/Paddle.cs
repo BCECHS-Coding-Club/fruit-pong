@@ -13,6 +13,12 @@ namespace com.Gale.Player
         [Tooltip("The angle that the ball will be reflected off of.")]
         public float maxPaddleHitAngle = 0f;
         
+        private void Update()
+        {
+            var inp = Input.GetAxisRaw("Vertical");
+            transform.position += new Vector3(0, inp * Time.deltaTime * 5, 0);
+        }
+
         /*
         private void OnCollisionEnter2D(Collision2D other)
         {

@@ -30,6 +30,7 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
+
         private void FixedUpdate()
         {
             var velocity = _rigidbody2D.velocity;
@@ -49,23 +50,31 @@ namespace com.Gale
             var paddle = other.gameObject.GetComponent<Paddle>();
             if (paddle)
             {
-                var angleBetweenBallAndPaddle = Vector2.Angle(other.transform.position, transform.position) * Mathf.Deg2Rad;
+                var position = transform.position;
+                var otherPosition = other.transform.position;
+                
+                // var angleBetweenBallAndPaddle = Vector2.Angle(otherPosition, position) * Mathf.Deg2Rad;
                 
                 // TODO change all this to clamp the angle instead of being a difference in position.
-                var percentFromPaddleCenter =  (other.transform.position.y - transform.position.y) / other.transform.localScale.y;
+                var percentFromPaddleCenter =
+                    Mathf.Clamp(2 * (position.y - otherPosition.y) / other.transform.localScale.y,
+                        -1.0f, 1.0f);
                 Debug.Log("Percent from center: " + percentFromPaddleCenter);
 
                 var reflectAngle = paddle.maxPaddleHitAngle * Mathf.Deg2Rad * percentFromPaddleCenter;
-                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle), Mathf.Sin(reflectAngle));
+                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude, Mathf.Sin(reflectAngle) * reflectVector.magnitude);
                 
                 Debug.Log($"Reflect Angle: {reflectAngle * Mathf.Rad2Deg}\nNew Reflect Vector: {newReflectVector}");
+
+                _rigidbody2D.velocity = newReflectVector;
             }
             else
             {
                 // Do normal physics
+                _rigidbody2D.velocity = reflectVector;
             }
             
-            _rigidbody2D.velocity = reflectVector;
+            
         }
     }
 }
