@@ -119,3 +119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 542eb80f972c600499c8659671d307af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxPaddleHitAngle: 0
+  actions:
+    m_Name: Actions
+    m_Id: 61ed96d4-2c4f-497e-8ac1-d03a8daafeba
+    m_Asset: {fileID: 0}
+    m_Actions: []
+    m_Bindings: []
