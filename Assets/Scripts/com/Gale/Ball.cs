@@ -14,13 +14,13 @@ namespace com.Gale
         
         public float speed = 5f;
 
-        
+        public IPowerup powerup = null;
 
         private Rigidbody2D _rigidbody2D;
         private CircleCollider2D _circleCollider2D;
 
         // For optimization in OnCollisionEnter2D, so that the list isn't destroyed every collision.
-        private List<ContactPoint2D> collisions = new List<ContactPoint2D>();
+        private List<ContactPoint2D> _collisions = new List<ContactPoint2D>();
 
         private void Start()
         {
@@ -33,18 +33,27 @@ namespace com.Gale
 
         private void FixedUpdate()
         {
-            var velocity = _rigidbody2D.velocity;
+            var velocity = CalculateVelocity();
             transform.position += new Vector3(velocity.x, velocity.y) * 0.001f;
             // _rigidbody2D.AddForce(velocity * 0.001f);
         }
 
+        private Vector2 CalculateVelocity()
+        {
+            if (powerup != null)
+            {
+                _rigidbody2D.velocity = powerup.CalculateBallVelocity(this);
+            }
+            return _rigidbody2D.velocity;
+        }
+
         private void OnCollisionEnter2D(Collision2D other)
         {
-            collisions.Clear();
-            other.GetContacts(collisions);
+            _collisions.Clear();
+            other.GetContacts(_collisions);
 
             // C# Reduce function
-            var aggregateNormal = collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal ).normalized;
+            var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
 
             var paddle = other.gameObject.GetComponent<Paddle>();
@@ -73,8 +82,6 @@ namespace com.Gale
                 // Do normal physics
                 _rigidbody2D.velocity = reflectVector;
             }
-            
-            
         }
     }
 }

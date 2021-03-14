@@ -57,15 +57,9 @@ namespace com.Gale.Player
             // Collide with objects
             throw new NotImplementedException();
         }
-        private void FixedUpdate()
-        {
-            // Move the paddle
-            throw new NotImplementedException();
-        }
         */
         public void OnVerticalMovement(InputAction.CallbackContext context)
         {
-            Debug.Log("Changing vertical movement...");
             _currInput = context.ReadValue<float>();
         }
     }

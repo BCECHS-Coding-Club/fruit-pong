@@ -545,7 +545,6 @@ GameObject:
   - component: {fileID: 1743403824}
   - component: {fileID: 1743403828}
   - component: {fileID: 1743403823}
-  - component: {fileID: 1743403822}
   - component: {fileID: 1743403827}
   m_Layer: 8
   m_Name: Ball
@@ -554,25 +553,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1743403822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1743403821}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0f93ba8a91198c4397b7608bff5ebe4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _moveSpeed: 0.07
-  rayCount: 3
-  collisionLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  velocity: {x: 0, y: 0}
-  circleCol: {fileID: 1743403823}
 --- !u!58 &1743403823
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -901,7 +881,7 @@ PrefabInstance:
     - target: {fileID: 1628360423395250596, guid: 58d0281b1f549344689c09288e0b5e08,
         type: 3}
       propertyPath: speed
-      value: 0.05
+      value: 0.17
       objectReference: {fileID: 0}
     - target: {fileID: 1628360423395250596, guid: 58d0281b1f549344689c09288e0b5e08,
         type: 3}
