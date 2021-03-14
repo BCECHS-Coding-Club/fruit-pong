@@ -14,7 +14,7 @@ namespace com.Gale
         
         public float speed = 5f;
 
-        public IPowerup powerup = null;
+        public IPowerup Powerup { get; private set; }
 
         private Rigidbody2D _rigidbody2D;
         private CircleCollider2D _circleCollider2D;
@@ -30,7 +30,6 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
-
         private void FixedUpdate()
         {
             var velocity = CalculateVelocity();
@@ -40,11 +39,24 @@ namespace com.Gale
 
         private Vector2 CalculateVelocity()
         {
-            if (powerup != null)
+            if (Powerup != null)
             {
-                _rigidbody2D.velocity = powerup.CalculateBallVelocity(this);
+                _rigidbody2D.velocity = Powerup.CalculateBallVelocity(_rigidbody2D);
             }
             return _rigidbody2D.velocity;
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.CompareTag("Powerup"))
+            {
+                var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
+                Powerup = collidedPowerup;
+                
+                GameObject.Destroy(other.gameObject);
+                
+                Debug.Log("Collided with a powerup!\n" + Powerup);
+            }
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -55,15 +67,16 @@ namespace com.Gale
             // C# Reduce function
             var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
-
-            var paddle = other.gameObject.GetComponent<Paddle>();
-            if (paddle)
+            
+            
+            if (other.gameObject.CompareTag("Paddle"))
             {
+                var paddle = other.gameObject.GetComponent<Paddle>();
                 var position = transform.position;
                 var otherPosition = other.transform.position;
-                
+
                 // var angleBetweenBallAndPaddle = Vector2.Angle(otherPosition, position) * Mathf.Deg2Rad;
-                
+
                 // TODO change all this to clamp the angle instead of being a difference in position.
                 var percentFromPaddleCenter =
                     Mathf.Clamp(2 * (position.y - otherPosition.y) / other.transform.localScale.y,
@@ -71,8 +84,9 @@ namespace com.Gale
                 Debug.Log("Percent from center: " + percentFromPaddleCenter);
 
                 var reflectAngle = paddle.maxPaddleHitAngle * Mathf.Deg2Rad * percentFromPaddleCenter;
-                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude, Mathf.Sin(reflectAngle) * reflectVector.magnitude);
-                
+                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude,
+                    Mathf.Sin(reflectAngle) * reflectVector.magnitude);
+
                 Debug.Log($"Reflect Angle: {reflectAngle * Mathf.Rad2Deg}\nNew Reflect Vector: {newReflectVector}");
 
                 _rigidbody2D.velocity = newReflectVector;
