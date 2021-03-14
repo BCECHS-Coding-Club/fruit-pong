@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using com.Gale.Player;
+using com.Gale.Powerups;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -52,8 +53,8 @@ namespace com.Gale
             {
                 var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
                 Powerup = collidedPowerup;
-                
-                GameObject.Destroy(other.gameObject);
+
+                collidedPowerup.OnDestroy();
                 
                 Debug.Log("Collided with a powerup!\n" + Powerup);
             }

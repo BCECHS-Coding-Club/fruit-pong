@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using com.Gale.Input;
 using com.Gale.Player;
 using UnityEngine;
 
-namespace com.Gale {
+namespace com.Gale.Powerups {
     [RequireComponent(typeof(Collider2D))]
     public class WatermelonPowerup : MonoBehaviour, IPowerup
     {
@@ -28,6 +24,22 @@ namespace com.Gale {
             // Calculate based on the ball's velocity
             return Vector2.zero;
         }
+
+        public void OnDestroy()
+        {
+            // TODO: Start any animations.
+            Destroy(gameObject);
+            
+            // WatermelonPowerup still stays alive because ball holds the reference.
+        }
+
+        public void OnPaddleHit(Rigidbody2D rb, Paddle paddle)
+        {
+            // TODO: Stop the powerup entirely.
+            // TODO: Play any hit animations.
+            throw new NotImplementedException();
+        }
+
         // END: IPowerup interface functions
     }
 }
