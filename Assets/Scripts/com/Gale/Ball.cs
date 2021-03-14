@@ -65,10 +65,12 @@ namespace com.Gale
             _collisions.Clear();
             other.GetContacts(_collisions);
 
+            // TODO: Put all the relevant information inside of a struct so there's necessary copying.
+            Powerup?.OnBallCollision2D(_collisions);
+            
             // C# Reduce function
             var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
-            
             
             if (other.gameObject.CompareTag("Paddle"))
             {
