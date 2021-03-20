@@ -15,7 +15,7 @@ namespace com.Gale
         
         public float speed = 5f;
 
-        public IPowerup Powerup { get; private set; }
+        public IPowerup Powerup { get;  set; }
 
         private Rigidbody2D _rigidbody2D;
         private CircleCollider2D _circleCollider2D;
@@ -47,14 +47,14 @@ namespace com.Gale
             return _rigidbody2D.velocity;
         }
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnTriggerStay2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("Powerup"))
             {
                 var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
                 Powerup = collidedPowerup;
 
-                collidedPowerup.OnDestroy();
+                collidedPowerup.OnCollectPowerup();
                 
                 Debug.Log("Collided with a powerup!\n" + Powerup);
             }
@@ -66,11 +66,20 @@ namespace com.Gale
             other.GetContacts(_collisions);
 
             // TODO: Put all the relevant information inside of a struct so there's necessary copying.
-            Powerup?.OnBallCollision2D(_collisions);
+            var vector = Powerup?.OnBallCollision(_collisions, other.gameObject, this);
+            var vectorVal = vector.GetValueOrDefault(Vector2.zero);
             
+
             // C# Reduce function
             var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
+            
+            if (vectorVal != Vector2.zero)
+            {
+                // The VERY obvious bug in this is that the powerup may not handle collisions at all.
+                _rigidbody2D.velocity = vectorVal;
+                return;
+            }
             
             if (other.gameObject.CompareTag("Paddle"))
             {

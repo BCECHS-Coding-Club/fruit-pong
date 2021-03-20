@@ -8,10 +8,10 @@ namespace com.Gale.Powerups
     {
         // Whenever this is called, use this instead of the calculated velocity.
         Vector2 CalculateBallVelocity(Rigidbody2D rb);
-        void OnDestroy();
-        void OnPaddleHit(Rigidbody2D ballRigidbody2D, Paddle paddle);
+        void OnCollectPowerup();
  
         // Velocity may need to be changed based on this.
-        void OnBallCollision2D(List<ContactPoint2D> contacts);
+        Vector2 OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball);
+        
     }
 }
