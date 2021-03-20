@@ -245,121 +245,6 @@ namespace com.Gale.Input
                     ""isPartOfComposite"": true
                 }
             ]
-        },
-        {
-            ""name"": ""Player"",
-            ""id"": ""55f2d89d-5b4e-4991-a4b9-d6d53ca25dbe"",
-            ""actions"": [
-                {
-                    ""name"": ""Vertical Movement"",
-                    ""type"": ""Value"",
-                    ""id"": ""c95ed3fc-4898-49af-a085-b0a1f88334a6"",
-                    ""expectedControlType"": ""Axis"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": ""Controller"",
-                    ""id"": ""d253e59e-1e57-4516-8d67-bfd79b16c96d"",
-                    ""path"": ""1DAxis(whichSideWins=1)"",
-                    ""interactions"": """",
-                    ""processors"": ""StickDeadzone"",
-                    ""groups"": """",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""50d9f02c-58df-4170-bc9a-ad5c24ba5a93"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""bd65e98c-cd20-4e23-8bfc-02868c98825d"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Keyboard"",
-                    ""id"": ""cb350a69-ffaa-4c67-9dfe-340fc7e37117"",
-                    ""path"": ""1DAxis(whichSideWins=1)"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""3c87b9a7-bfeb-4d21-a140-242d1af2b262"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""6901be39-8ff1-4f7e-8b52-30845eed796d"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""DPad"",
-                    ""id"": ""c18c18b3-0ed7-4651-ba1a-c997abbd03fb"",
-                    ""path"": ""1DAxis(whichSideWins=1)"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""negative"",
-                    ""id"": ""7746e8cc-4260-4951-b18e-be2bbd78b2a7"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""positive"",
-                    ""id"": ""7306aa4d-a2b7-4a19-8179-9e85fd9bb170"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Vertical Movement"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                }
-            ]
         }
     ],
     ""controlSchemes"": [
@@ -393,9 +278,6 @@ namespace com.Gale.Input
             // Player 2
             m_Player2 = asset.FindActionMap("Player 2", throwIfNotFound: true);
             m_Player2_VerticalMovement = m_Player2.FindAction("Vertical Movement", throwIfNotFound: true);
-            // Player
-            m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-            m_Player_VerticalMovement = m_Player.FindAction("Vertical Movement", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -507,39 +389,6 @@ namespace com.Gale.Input
             }
         }
         public Player2Actions @Player2 => new Player2Actions(this);
-
-        // Player
-        private readonly InputActionMap m_Player;
-        private IPlayerActions m_PlayerActionsCallbackInterface;
-        private readonly InputAction m_Player_VerticalMovement;
-        public struct PlayerActions
-        {
-            private @InputController m_Wrapper;
-            public PlayerActions(@InputController wrapper) { m_Wrapper = wrapper; }
-            public InputAction @VerticalMovement => m_Wrapper.m_Player_VerticalMovement;
-            public InputActionMap Get() { return m_Wrapper.m_Player; }
-            public void Enable() { Get().Enable(); }
-            public void Disable() { Get().Disable(); }
-            public bool enabled => Get().enabled;
-            public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
-            public void SetCallbacks(IPlayerActions instance)
-            {
-                if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
-                {
-                    @VerticalMovement.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalMovement;
-                    @VerticalMovement.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalMovement;
-                    @VerticalMovement.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnVerticalMovement;
-                }
-                m_Wrapper.m_PlayerActionsCallbackInterface = instance;
-                if (instance != null)
-                {
-                    @VerticalMovement.started += instance.OnVerticalMovement;
-                    @VerticalMovement.performed += instance.OnVerticalMovement;
-                    @VerticalMovement.canceled += instance.OnVerticalMovement;
-                }
-            }
-        }
-        public PlayerActions @Player => new PlayerActions(this);
         private int m_KeyboardSchemeIndex = -1;
         public InputControlScheme KeyboardScheme
         {
@@ -563,10 +412,6 @@ namespace com.Gale.Input
             void OnVerticalMovement(InputAction.CallbackContext context);
         }
         public interface IPlayer2Actions
-        {
-            void OnVerticalMovement(InputAction.CallbackContext context);
-        }
-        public interface IPlayerActions
         {
             void OnVerticalMovement(InputAction.CallbackContext context);
         }

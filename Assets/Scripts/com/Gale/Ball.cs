@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using com.Gale.Player;
 using com.Gale.Powerups;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace com.Gale
@@ -96,7 +98,7 @@ namespace com.Gale
                 Debug.Log("Percent from center: " + percentFromPaddleCenter);
 
                 var reflectAngle = paddle.maxPaddleHitAngle * Mathf.Deg2Rad * percentFromPaddleCenter;
-                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude,
+                var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude * Mathf.Sign(aggregateNormal.x),
                     Mathf.Sin(reflectAngle) * reflectVector.magnitude);
 
                 Debug.Log($"Reflect Angle: {reflectAngle * Mathf.Rad2Deg}\nNew Reflect Vector: {newReflectVector}");

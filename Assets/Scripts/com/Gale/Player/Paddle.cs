@@ -11,7 +11,7 @@ namespace com.Gale.Player
         Player2,
         None
     }
-    public class Paddle : MonoBehaviour, InputController.IPlayerActions
+    public class Paddle : MonoBehaviour, InputController.IPlayer1Actions, InputController.IPlayer2Actions
     {
         // Used for whenever the ball hits an area of the paddle that is not at the center,
         // So that it can be reflected away at an angle.
@@ -34,7 +34,18 @@ namespace com.Gale.Player
             {
                 _inputController = new InputController();
                 
-                _inputController.Player.SetCallbacks(this);
+                switch (playerNumber)
+                {
+                    case PlayerNumber.Player1:
+                        _inputController.Player1.SetCallbacks(this);
+                        break;
+                    case PlayerNumber.Player2:
+                        _inputController.Player2.SetCallbacks(this);
+                        break;
+                    case PlayerNumber.None:
+                    default:
+                        throw new Exception("Did not assign the paddle a player.");
+                }
             }
             
             _inputController.Enable();
