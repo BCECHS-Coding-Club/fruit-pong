@@ -33,6 +33,12 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
+        public void OnGoal()
+        {
+            transform.position = Vector3.zero;
+            _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
+        }
+
         private void FixedUpdate()
         {
             var velocity = CalculateVelocity();

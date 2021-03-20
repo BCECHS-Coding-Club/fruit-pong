@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Powerup
   - Paddle
+  - Ball
   layers:
   - Default
   - TransparentFX
