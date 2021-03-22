@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace com.Gale
 {
@@ -8,6 +9,8 @@ namespace com.Gale
     {
         [SerializeField]
         private Collider2D collider;
+
+        [SerializeField] private Text scoreCounter;
 
         // TODO: Turn into a separate class.
         public uint points = 0;
@@ -27,6 +30,8 @@ namespace com.Gale
                 points++;
 
                 other.GetComponent<Ball>()?.OnGoal();
+
+                scoreCounter.text = points.ToString();
             }
         }
     }
