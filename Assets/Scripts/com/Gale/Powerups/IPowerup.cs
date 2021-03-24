@@ -11,7 +11,7 @@ namespace com.Gale.Powerups
         void OnCollectPowerup();
  
         // Velocity may need to be changed based on this.
-        Vector2 OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball);
+        Vector2? OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball);
         
     }
 }

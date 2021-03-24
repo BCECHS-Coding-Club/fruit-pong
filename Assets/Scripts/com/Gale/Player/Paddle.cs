@@ -14,6 +14,8 @@ namespace com.Gale.Player
         Player2,
         None
     }
+
+    [RequireComponent(typeof(Collider2D))]
     public class Paddle : MonoBehaviour, InputController.IPlayer1Actions, InputController.IPlayer2Actions
     {
         // Used for whenever the ball hits an area of the paddle that is not at the center,
@@ -28,8 +30,15 @@ namespace com.Gale.Player
         [SerializeField]
         private PlayerNumber playerNumber = PlayerNumber.None;
         
+        
         private InputController _inputController;
+        private Collider2D _collider;
         private float _currInput = 0f;
+
+        private void Start()
+        {
+            _collider = GetComponent<Collider2D>();
+        }
 
         private void OnEnable()
         {
@@ -75,6 +84,23 @@ namespace com.Gale.Player
         public void OnVerticalMovement(InputAction.CallbackContext context)
         {
             _currInput = context.ReadValue<float>();
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.CompareTag("Ball")) return;
+            var distance = _collider.Distance(other.collider);
+            var translation = distance.distance * distance.normal;
+            transform.position += new Vector3(0, translation.y);
+        }
+
+        private void OnCollisionStay2D(Collision2D other)
+        {
+            // Make sure we don't move toward other collider.
+            if (other.gameObject.CompareTag("Ball")) return;
+            var distance = _collider.Distance(other.collider);
+            var translation = distance.distance * distance.normal;
+            transform.position += new Vector3(0, translation.y);
         }
     }
 }

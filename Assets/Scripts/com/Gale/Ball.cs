@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using com.Gale.Player;
 using com.Gale.Powerups;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Random = UnityEngine.Random;
 
 namespace com.Gale
@@ -41,18 +39,17 @@ namespace com.Gale
 
         private void FixedUpdate()
         {
-            var velocity = CalculateVelocity();
-            transform.position += new Vector3(velocity.x, velocity.y) * 0.001f;
+            // var velocity = CalculateVelocity();
+            
+            // transform.position += new Vector3(velocity.x, velocity.y) * 0.001f;
+            _rigidbody2D.velocity = CalculateVelocity();
             // _rigidbody2D.AddForce(velocity * 0.001f);
         }
 
         private Vector2 CalculateVelocity()
         {
-            if (Powerup != null)
-            {
-                _rigidbody2D.velocity = Powerup.CalculateBallVelocity(_rigidbody2D);
-            }
-            return _rigidbody2D.velocity;
+            // TODO: Don't set rigidbody velocity and figure out if the velocity needs to be mutated here.
+            return (Powerup?.CalculateBallVelocity(_rigidbody2D)).GetValueOrDefault(_rigidbody2D.velocity);
         }
 
         private void OnTriggerStay2D(Collider2D other)
@@ -117,5 +114,20 @@ namespace com.Gale
                 _rigidbody2D.velocity = reflectVector;
             }
         }
+
+        /*
+        private void OnCollisionStay2D(Collision2D other)
+        {
+            _collisions.Clear();
+            other.GetContacts(_collisions);
+            
+            var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
+            var distance = _circleCollider2D.Distance(other.collider);
+            if (!distance.isOverlapped) return;
+            
+            var translation = distance.distance * distance.normal;
+            transform.position += new Vector3(translation.y, translation.y);
+        }
+        */
     }
 }

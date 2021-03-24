@@ -56,7 +56,7 @@ namespace com.Gale.Powerups {
             Destroy(gameObject);
         }
 
-        public Vector2 OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball)
+        public Vector2? OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball)
         {
             if (obj.CompareTag("Paddle") && _hasTouchedFloor)
             {
