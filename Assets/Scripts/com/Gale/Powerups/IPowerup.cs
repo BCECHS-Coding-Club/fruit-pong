@@ -4,14 +4,21 @@ using UnityEngine;
 
 namespace com.Gale.Powerups
 {
+    public struct BallCollisionDetails
+    {
+        public IEnumerable<ContactPoint2D> Contacts;
+        public GameObject GameObject;
+        public Ball Ball;
+    }
+    
     public interface IPowerup
     {
         // Whenever this is called, use this instead of the calculated velocity.
-        Vector2 CalculateBallVelocity(Rigidbody2D rb);
+        Vector2? CalculateBallVelocity(Rigidbody2D rb);
+        // Called whenever the ball collects the powerup.
         void OnCollectPowerup();
- 
-        // Velocity may need to be changed based on this.
-        Vector2? OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball);
+        // Called whenever the ball collides with anything when the powerup is attached to it.
+        Vector2? OnBallCollision(BallCollisionDetails details);
         
     }
 }

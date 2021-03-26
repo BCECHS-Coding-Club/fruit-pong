@@ -17,18 +17,13 @@ namespace com.Gale.Powerups {
         [SerializeField]
         private Collider2D collider2D;
 
-        ~WatermelonPowerup()
-        {
-            Destroy(gameObject);
-        }
-        
         private void Start()
         {
             collider2D = GetComponent<Collider2D>();
         }
 
         // START: IPowerup interface functions
-        public Vector2 CalculateBallVelocity(Rigidbody2D rb)
+        public Vector2? CalculateBallVelocity(Rigidbody2D rb)
         {
             var clampedSpeed = Mathf.Clamp(rb.velocity.magnitude * speed, 0f, maxSpeed);
             if (_hasTouchedFloor)
@@ -56,12 +51,15 @@ namespace com.Gale.Powerups {
             Destroy(gameObject);
         }
 
-        public Vector2? OnBallCollision(List<ContactPoint2D> contacts, GameObject obj, Ball ball)
+        public Vector2? OnBallCollision(BallCollisionDetails details)
         {
+            var obj = details.GameObject;
+            var contacts = details.Contacts;
+            var ball = details.Ball;
             if (obj.CompareTag("Paddle") && _hasTouchedFloor)
             {
                 // Remove the powerup.
-                ball.Powerup = null;
+                details.Ball.DestroyPowerup();
 
                 var paddle = obj.GetComponent<Paddle>();
                 if (!paddle)
@@ -74,13 +72,14 @@ namespace com.Gale.Powerups {
                 return new Vector2(Mathf.Cos(paddle.maxPaddleHitAngle * Mathf.Deg2Rad) * ball.speed * direction, Mathf.Sin(paddle.maxPaddleHitAngle * Mathf.Deg2Rad) * ball.speed);
             }
 
-            if (contacts.Count <= 0) return Vector2.zero;
-            foreach (var contact in contacts)
+            var contactPoint2Ds = contacts as ContactPoint2D[] ?? contacts.ToArray();
+            if (!contactPoint2Ds.Any()) return null;
+            foreach (var contact in contactPoint2Ds)
             {
                 _hasTouchedFloor = _hasTouchedFloor || contact.normal == Vector2.up;
             }
-
-            return Vector2.zero;
+            
+            return null;
         }
 
         // END: IPowerup interface functions

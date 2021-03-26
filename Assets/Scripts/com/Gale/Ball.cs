@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using com.Gale.Player;
 using com.Gale.Powerups;
 using UnityEngine;
@@ -20,7 +21,6 @@ namespace com.Gale
         private Rigidbody2D _rigidbody2D;
         private CircleCollider2D _circleCollider2D;
 
-        // For optimization in OnCollisionEnter2D, so that the list isn't destroyed every collision.
         private List<ContactPoint2D> _collisions = new List<ContactPoint2D>();
 
         private void Start()
@@ -31,10 +31,26 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
+        public void ChangeToRandomVelocity()
+        {
+            // Null check is necessary for when the ball is instantiated by powerups.
+            if (!_rigidbody2D)
+            {
+                _rigidbody2D = GetComponent<Rigidbody2D>();
+            }
+            _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
+        }
+
         public void OnGoal()
         {
             transform.position = Vector3.zero;
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
+            Powerup = null;
+        }
+
+        public void DestroyPowerup()
+        {
+            Powerup = null;
         }
 
         private void FixedUpdate()
@@ -59,7 +75,7 @@ namespace com.Gale
                 var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
                 Powerup = collidedPowerup;
 
-                collidedPowerup.OnCollectPowerup();
+                Powerup.OnCollectPowerup();
                 
                 Debug.Log("Collided with a powerup!\n" + Powerup);
             }
@@ -67,16 +83,28 @@ namespace com.Gale
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            _collisions.Clear();
-            other.GetContacts(_collisions);
+            // Maybe make this an array?
+            // For some reason clearing the list doesn't actually do anything.
+            // _collisions.Clear();
+            var contactCount = other.GetContacts(_collisions);
 
-            // TODO: Put all the relevant information inside of a struct so there's necessary copying.
-            var vector = Powerup?.OnBallCollision(_collisions, other.gameObject, this);
+            // TODO: Put all the relevant information inside of a struct so there isn't unnecessary copying.
+            var vector = Powerup?.OnBallCollision(new BallCollisionDetails
+            {
+                Ball = this,
+                Contacts = _collisions,
+                GameObject = other.gameObject
+            });
             var vectorVal = vector.GetValueOrDefault(Vector2.zero);
-            
 
-            // C# Reduce function
-            var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
+            // Note: I initially used LinQ but it didn't work because GetContacts always returns 128 contacts.
+            var aggregateNormal = Vector2.zero;
+            for (var i = 0; i < contactCount; i++)
+            {
+                aggregateNormal += _collisions[i].normal / contactCount;
+            }
+            // aggregateNormal = aggregateNormal.normalized
+            
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
             
             if (vectorVal != Vector2.zero)
@@ -107,27 +135,20 @@ namespace com.Gale
                 Debug.Log($"Reflect Angle: {reflectAngle * Mathf.Rad2Deg}\nNew Reflect Vector: {newReflectVector}");
 
                 _rigidbody2D.velocity = newReflectVector;
-            }
-            else
-            {
-                // Do normal physics
-                _rigidbody2D.velocity = reflectVector;
-            }
+                return;
+            } 
+            // Do normal physics
+            _rigidbody2D.velocity = reflectVector;
         }
 
-        /*
+        // Just used for when the ball gets stuck in a wall.
         private void OnCollisionStay2D(Collision2D other)
         {
-            _collisions.Clear();
-            other.GetContacts(_collisions);
-            
-            var aggregateNormal = _collisions.Aggregate(Vector2.zero, (acc, norm) => acc + norm.normal).normalized;
             var distance = _circleCollider2D.Distance(other.collider);
             if (!distance.isOverlapped) return;
             
             var translation = distance.distance * distance.normal;
-            transform.position += new Vector3(translation.y, translation.y);
+            transform.position += new Vector3(translation.x, translation.y);
         }
-        */
     }
 }
