@@ -7,6 +7,7 @@ namespace com.Gale.Powerups
     public struct BallCollisionDetails
     {
         public IEnumerable<ContactPoint2D> Contacts;
+        public uint ContactCount;
         public GameObject GameObject;
         public Ball Ball;
     }

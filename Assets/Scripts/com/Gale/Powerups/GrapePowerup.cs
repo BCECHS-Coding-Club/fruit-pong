@@ -39,7 +39,6 @@ namespace com.Gale.Powerups
             
             Destroy(GetComponent<Ball>());
             Destroy(gameObject);
-            Debug.Log("Grape burned and died.");
 
             yield return null;
         }

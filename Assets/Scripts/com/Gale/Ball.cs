@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using com.Gale.Player;
 using com.Gale.Powerups;
 using UnityEngine;
@@ -15,6 +13,9 @@ namespace com.Gale
     {
         
         public float speed = 5f;
+
+        // Used just in case that the ball gets stuck going vertically.
+        public Vector2 constantAppliedMovementFactor = new Vector2(0.05f, 0f);
 
         public IPowerup Powerup { get;  set; }
 
@@ -63,7 +64,8 @@ namespace com.Gale
         private Vector2 CalculateVelocity()
         {
             // TODO: Don't set rigidbody velocity and figure out if the velocity needs to be mutated here.
-            return (Powerup?.CalculateBallVelocity(_rigidbody2D)).GetValueOrDefault(_rigidbody2D.velocity);
+            var velocity = _rigidbody2D.velocity;
+            return (Powerup?.CalculateBallVelocity(_rigidbody2D)).GetValueOrDefault(velocity + constantAppliedMovementFactor * Mathf.Sign(velocity.x));
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -89,6 +91,7 @@ namespace com.Gale
             {
                 Ball = this,
                 Contacts = _collisions,
+                ContactCount = (uint)contactCount,
                 GameObject = other.gameObject
             });
             var vectorVal = vector.GetValueOrDefault(Vector2.zero);
