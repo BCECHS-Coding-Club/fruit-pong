@@ -23,21 +23,19 @@ namespace com.Gale
 
         private List<ContactPoint2D> _collisions = new List<ContactPoint2D>();
 
-        private void Start()
+        private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
             _circleCollider2D = GetComponent<CircleCollider2D>();
-            
+        }
+
+        private void Start()
+        {
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
         public void ChangeToRandomVelocity()
         {
-            // Null check is necessary for when the ball is instantiated by powerups.
-            if (!_rigidbody2D)
-            {
-                _rigidbody2D = GetComponent<Rigidbody2D>();
-            }
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
@@ -68,15 +66,13 @@ namespace com.Gale
             return (Powerup?.CalculateBallVelocity(_rigidbody2D)).GetValueOrDefault(_rigidbody2D.velocity);
         }
 
-        private void OnTriggerStay2D(Collider2D other)
+        private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.gameObject.CompareTag("Powerup"))
             {
                 var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
+                collidedPowerup.OnCollectPowerup(this);
                 Powerup = collidedPowerup;
-
-                Powerup.OnCollectPowerup();
-                
                 Debug.Log("Collided with a powerup!\n" + Powerup);
             }
         }
@@ -126,13 +122,10 @@ namespace com.Gale
                 var percentFromPaddleCenter =
                     Mathf.Clamp(2 * (position.y - otherPosition.y) / other.transform.localScale.y,
                         -1.0f, 1.0f);
-                Debug.Log("Percent from center: " + percentFromPaddleCenter);
 
                 var reflectAngle = paddle.maxPaddleHitAngle * Mathf.Deg2Rad * percentFromPaddleCenter;
                 var newReflectVector = new Vector2(Mathf.Cos(reflectAngle) * reflectVector.magnitude * Mathf.Sign(aggregateNormal.x),
                     Mathf.Sin(reflectAngle) * reflectVector.magnitude);
-
-                Debug.Log($"Reflect Angle: {reflectAngle * Mathf.Rad2Deg}\nNew Reflect Vector: {newReflectVector}");
 
                 _rigidbody2D.velocity = newReflectVector;
                 return;

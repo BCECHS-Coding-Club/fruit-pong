@@ -16,9 +16,11 @@ namespace com.Gale.Powerups
         // Whenever this is called, use this instead of the calculated velocity.
         Vector2? CalculateBallVelocity(Rigidbody2D rb);
         // Called whenever the ball collects the powerup.
-        void OnCollectPowerup();
+        void OnCollectPowerup(Ball ball);
         // Called whenever the ball collides with anything when the powerup is attached to it.
         Vector2? OnBallCollision(BallCollisionDetails details);
         
+        // TODO
+        // void OnBallReset();
     }
 }

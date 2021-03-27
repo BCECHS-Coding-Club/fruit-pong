@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
@@ -10,15 +11,15 @@ namespace com.Gale.Powerups
     [RequireComponent(typeof(Rigidbody2D))]
     public class GrapePowerup : MonoBehaviour, IPowerup
     {
-
-        
         public int ballSplitCount = 5;
         [SerializeField] private GameObject ballObject;
-
         
         private uint _ballCollideCount = 0;
         // The amount of times the ball should collide before being destroyed.
         public uint maxBallCollisions = 5;
+
+        public float totalAliveTime = 10f;
+        public float aliveTimeVariation = 0.5f;
 
         private Collider2D _collider2D;
         
@@ -27,13 +28,29 @@ namespace com.Gale.Powerups
             _collider2D = GetComponent<Collider2D>();
         }
 
+        public void SetTimeout(float secs)
+        {
+            StartCoroutine(KillSelf(secs));
+        }
+
+        private IEnumerator KillSelf(float time)
+        {
+            yield return new WaitForSeconds(time);
+            
+            Destroy(GetComponent<Ball>());
+            Destroy(gameObject);
+            Debug.Log("Grape burned and died.");
+
+            yield return null;
+        }
+
         public Vector2? CalculateBallVelocity(Rigidbody2D rb)
         {
             // Don't change the velocity of the ball.
             return null;
         }
 
-        public void OnCollectPowerup()
+        public void OnCollectPowerup(Ball ball)
         {
             _collider2D.enabled = false;
             enabled = false;
@@ -42,26 +59,35 @@ namespace com.Gale.Powerups
             for (var i = 0; i < ballSplitCount; i++)
             {
                 var newBall = Instantiate(ballObject);
+                var grapePowerup =  newBall.AddComponent<GrapePowerup>();
+                grapePowerup.SetTimeout(totalAliveTime + aliveTimeVariation * i);
+                
                 newBall.GetComponent<Ball>()?.ChangeToRandomVelocity();
             }
 
+            Destroy(ball.gameObject);
             Destroy(gameObject);
         }
 
         public Vector2? OnBallCollision(BallCollisionDetails details)
         {
-            if (details.GameObject.CompareTag("Paddle"))
+            return null;
+        }
+
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (other.gameObject.CompareTag("Paddle"))
             {
                 _ballCollideCount++;
             }
-
+            
             if (_ballCollideCount >= maxBallCollisions)
             {
-                details.Ball.DestroyPowerup();
-                Destroy(details.Ball.gameObject);
+                var ball = GetComponent<Ball>();
+                ball.DestroyPowerup();
+                Destroy(ball.gameObject);
+                Destroy(gameObject);
             }
-
-            return null;
         }
     }
 }

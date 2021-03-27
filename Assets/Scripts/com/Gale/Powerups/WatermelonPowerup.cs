@@ -32,7 +32,7 @@ namespace com.Gale.Powerups {
             return rb.velocity - new Vector2(0, acceleration);
         }
 
-        public void OnCollectPowerup()
+        public void OnCollectPowerup(Ball ball)
         {
             collider2D.enabled = false;
             enabled = false;
