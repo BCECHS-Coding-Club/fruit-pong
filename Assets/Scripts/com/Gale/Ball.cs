@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using com.Gale.Player;
 using com.Gale.Powerups;
 using UnityEngine;
@@ -85,25 +86,26 @@ namespace com.Gale
             // For some reason clearing the list doesn't actually do anything.
             // _collisions.Clear();
             var contactCount = other.GetContacts(_collisions);
-
-            // TODO: Put all the relevant information inside of a struct so there isn't unnecessary copying.
-            var vector = Powerup?.OnBallCollision(new BallCollisionDetails
-            {
-                Ball = this,
-                Contacts = _collisions,
-                ContactCount = (uint)contactCount,
-                GameObject = other.gameObject
-            });
-            var vectorVal = vector.GetValueOrDefault(Vector2.zero);
-
-            // Note: I initially used LinQ but it didn't work because GetContacts always returns 128 contacts.
+            
+            // TODO: This should probably just be given to the function.
             var aggregateNormal = Vector2.zero;
             for (var i = 0; i < contactCount; i++)
             {
                 aggregateNormal += _collisions[i].normal / contactCount;
             }
-            // aggregateNormal = aggregateNormal.normalized
-            
+
+            var contactPoint2Ds = _collisions.Take(contactCount).ToArray();
+
+            // TODO: Put all the relevant information inside of a struct so there isn't unnecessary copying.
+            var vector = Powerup?.OnBallCollision(new BallCollisionDetails
+            {
+                AggregateNormal = aggregateNormal,
+                Ball = this,
+                Contacts = contactPoint2Ds,
+                GameObject = other.gameObject
+            });
+            var vectorVal = vector.GetValueOrDefault(Vector2.zero);
+
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity, aggregateNormal);
             
             if (vectorVal != Vector2.zero)
@@ -121,7 +123,6 @@ namespace com.Gale
 
                 // var angleBetweenBallAndPaddle = Vector2.Angle(otherPosition, position) * Mathf.Deg2Rad;
 
-                // TODO change all this to clamp the angle instead of being a difference in position.
                 var percentFromPaddleCenter =
                     Mathf.Clamp(2 * (position.y - otherPosition.y) / other.transform.localScale.y,
                         -1.0f, 1.0f);

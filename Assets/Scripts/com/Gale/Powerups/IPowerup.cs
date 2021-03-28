@@ -6,10 +6,10 @@ namespace com.Gale.Powerups
 {
     public struct BallCollisionDetails
     {
-        public IEnumerable<ContactPoint2D> Contacts;
-        public uint ContactCount;
+        public ContactPoint2D[] Contacts;
         public GameObject GameObject;
         public Ball Ball;
+        public Vector2 AggregateNormal;
     }
     
     public interface IPowerup

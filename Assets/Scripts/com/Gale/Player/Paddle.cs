@@ -73,7 +73,6 @@ namespace com.Gale.Player
             transform.position += new Vector3(0, _currInput * speed);
         }
 
-
         /*
         private void OnCollisionEnter2D(Collision2D other)
         {

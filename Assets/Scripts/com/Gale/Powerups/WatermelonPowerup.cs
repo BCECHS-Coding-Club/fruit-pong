@@ -54,7 +54,6 @@ namespace com.Gale.Powerups {
         public Vector2? OnBallCollision(BallCollisionDetails details)
         {
             var obj = details.GameObject;
-            var contactArray = details.Contacts.ToArray();
             var ball = details.Ball;
             if (obj.CompareTag("Paddle") && _hasTouchedFloor)
             {
@@ -67,20 +66,15 @@ namespace com.Gale.Powerups {
                     throw new Exception("For some reason the object passed into " + name + " did not collide with a paddle.\n" + this);
                 }
 
-                var normal = Vector2.zero;
-                for (var i = 0; i < details.ContactCount; i++)
-                {
-                    normal += contactArray[i].normal / details.ContactCount;
-                }
-                var direction = Mathf.Sign(normal.x);
+                var direction = Mathf.Sign(details.AggregateNormal.x);
                 
                 return new Vector2(Mathf.Cos(paddle.maxPaddleHitAngle * Mathf.Deg2Rad) * ball.speed * direction, Mathf.Sin(paddle.maxPaddleHitAngle * Mathf.Deg2Rad) * ball.speed);
             }
 
-            
-            for (var i  = 0; i < details.ContactCount; i++)
+
+            foreach (var contact in details.Contacts)
             {
-                _hasTouchedFloor = _hasTouchedFloor || contactArray[i].normal == Vector2.up;
+                _hasTouchedFloor = _hasTouchedFloor || contact.normal == Vector2.up;
             }
             
             return null;

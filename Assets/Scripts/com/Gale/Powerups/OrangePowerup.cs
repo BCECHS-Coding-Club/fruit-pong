@@ -27,26 +27,18 @@ namespace com.Gale.Powerups
         public void OnCollectPowerup(Ball ball)
         {
             _rigidbody2D = ball.GetComponent<Rigidbody2D>();
+            
+            Destroy(gameObject);
         }
 
         public Vector2? OnBallCollision(BallCollisionDetails details)
         {
-            var contacts = details.Contacts.ToArray();
-
-            var normal = Vector2.zero;
-            for (var i = 0; i < details.ContactCount; i++)
-            {
-                 normal += contacts[i].normal / details.ContactCount;
-            }
-            Debug.Log("Contact Normal: "  + normal);
-
             if (details.GameObject.CompareTag("Paddle"))
             {
                 _paddleHits++;
                 if (paddleHitsUntilDestroyed <= _paddleHits)
                 {
                     details.Ball.DestroyPowerup();
-                    Destroy(gameObject);
                     return null;
                 }
                 
@@ -64,7 +56,7 @@ namespace com.Gale.Powerups
                 return newReflectVector;
             }
             
-            var reflectVector = Vector2.Reflect(_rigidbody2D.velocity,  normal);
+            var reflectVector = Vector2.Reflect(_rigidbody2D.velocity,  details.AggregateNormal);
             return reflectVector;
         }
     }
