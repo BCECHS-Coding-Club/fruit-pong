@@ -6,4 +6,5 @@ such as the ball's acceleration, or the gravity, or maybe just give you extra po
 Fruit Pong is intended to be finished in April.
 
 Minimum viable product reached on 3-13-21
+
 All of the powerups added on 3-27-21
