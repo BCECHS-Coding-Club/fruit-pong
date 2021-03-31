@@ -82,6 +82,7 @@ namespace com.Gale
 
         private void OnCollisionEnter2D(Collision2D other)
         {
+        
             // Maybe make this an array?
             // For some reason clearing the list doesn't actually do anything.
             // _collisions.Clear();
