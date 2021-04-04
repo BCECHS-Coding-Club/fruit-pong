@@ -350,6 +350,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: BananaPowerup
       objectReference: {fileID: 0}
+    - target: {fileID: 934215267409638951, guid: 24ec35159353fb518916dd754caa34e5,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3280696091693212060, guid: 24ec35159353fb518916dd754caa34e5,
         type: 3}
       propertyPath: m_RootOrder
@@ -519,6 +524,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: OrangePowerup
+      objectReference: {fileID: 0}
+    - target: {fileID: 3350021763400080962, guid: 6cbcc46c2d0058b68aa13a32f2e138c6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5642725184275997902, guid: 6cbcc46c2d0058b68aa13a32f2e138c6,
         type: 3}
@@ -999,6 +1009,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: WatermelonPowerup
+      objectReference: {fileID: 0}
+    - target: {fileID: 5543545551483926896, guid: 005c08e869c4a9fcba5c69b10c8d8993,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5543545551483926897, guid: 005c08e869c4a9fcba5c69b10c8d8993,
         type: 3}

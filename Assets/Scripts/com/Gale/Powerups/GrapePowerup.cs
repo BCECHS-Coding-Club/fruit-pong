@@ -21,6 +21,8 @@ namespace com.Gale.Powerups
         public float totalAliveTime = 10f;
         public float aliveTimeVariation = 0.5f;
 
+        public bool isPrimaryBall = false;
+
         private Collider2D _collider2D;
         
         private void Start()
@@ -33,10 +35,17 @@ namespace com.Gale.Powerups
             StartCoroutine(KillSelf(secs));
         }
 
+        // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator KillSelf(float time)
         {
             yield return new WaitForSeconds(time);
-            
+
+            if (isPrimaryBall)
+            {
+                Destroy(GetComponent<GrapePowerup>());
+                yield return null;
+            }
+
             Destroy(GetComponent<Ball>());
             Destroy(gameObject);
 
@@ -57,9 +66,11 @@ namespace com.Gale.Powerups
             // Split the ball into many smaller balls.
             for (var i = 0; i < ballSplitCount; i++)
             {
-                var newBall = Instantiate(ballObject);
+                var newBall = Instantiate(ballObject, ball.transform.position, transform.rotation);
                 var grapePowerup =  newBall.AddComponent<GrapePowerup>();
                 grapePowerup.SetTimeout(totalAliveTime + aliveTimeVariation * i);
+                if (i != 0) 
+                    grapePowerup.isPrimaryBall = true;
                 
                 newBall.GetComponent<Ball>()?.ChangeToRandomVelocity();
             }
