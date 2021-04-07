@@ -1,5 +1,8 @@
 using System;
+using com.Gale.Core;
+using com.Gale.Player;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace com.Gale
@@ -10,10 +13,9 @@ namespace com.Gale
         [SerializeField]
         private Collider2D collider;
 
-        [SerializeField] private Text scoreCounter;
 
-        // TODO: Turn into a separate class.
-        public uint points = 0;
+        private GlobalState _globalState;
+        [SerializeField] private PlayerNumber playerNumber = PlayerNumber.None;
 
         private void Start()
         {
@@ -21,17 +23,18 @@ namespace com.Gale
             {
                 throw new Exception("Goalpost will not work unless assigned a collider.\n" + this);
             }
+
+            _globalState = FindObjectOfType<GlobalState>();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("Ball"))
             {
-                points++;
-
-                other.GetComponent<Ball>()?.OnGoal();
-
-                scoreCounter.text = points.ToString();
+                var ball = other.gameObject.GetComponent<Ball>();
+                Assert.IsNotNull(ball);
+                _globalState.OnGoal(ball, playerNumber);
+                Destroy(ball.gameObject);
             }
         }
     }

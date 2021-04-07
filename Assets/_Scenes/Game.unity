@@ -652,6 +652,12 @@ MonoBehaviour:
   powerupPlacementBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 14, y: 10, z: 0}
+  player1Score:
+    uiElement: {fileID: 514789647}
+    score: 0
+  player2Score:
+    uiElement: {fileID: 780573092}
+    score: 0
 --- !u!1 &1101604782
 GameObject:
   m_ObjectHideFlags: 0
@@ -1044,6 +1050,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &2008719684
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8243945099000526435, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_Name
+      value: GrapePowerup
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8413700922201839638, guid: 19b03b9285c18af39b90b9f04e435aa1,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 19b03b9285c18af39b90b9f04e435aa1, type: 3}
 --- !u!1 &2048305562
 GameObject:
   m_ObjectHideFlags: 0
@@ -1089,8 +1164,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collider: {fileID: 2048305565}
-  scoreCounter: {fileID: 780573092}
-  points: 0
+  playerNumber: 1
 --- !u!61 &2048305565
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1162,8 +1236,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collider: {fileID: 2062071909}
-  scoreCounter: {fileID: 514789647}
-  points: 0
+  playerNumber: 0
 --- !u!61 &2062071909
 BoxCollider2D:
   m_ObjectHideFlags: 0

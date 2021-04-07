@@ -69,8 +69,6 @@ namespace com.Gale.Player
             FindObjectOfType<GlobalState>().OnPause();
         }
 
-
-
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Ball")) return;

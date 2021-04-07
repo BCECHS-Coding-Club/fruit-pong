@@ -17,6 +17,8 @@ namespace com.Gale.Powerups
 
         private Rigidbody2D _rigidbody2D;
         
+        [SerializeField] private Sprite ballSprite;
+        
         public Vector2? CalculateBallVelocity(Rigidbody2D rb)
         {
             var velocity = rb.velocity + Vector2.down * gravity;
@@ -27,6 +29,8 @@ namespace com.Gale.Powerups
         public void OnCollectPowerup(Ball ball)
         {
             _rigidbody2D = ball.GetComponent<Rigidbody2D>();
+
+            ball.GetComponent<SpriteRenderer>().sprite = ballSprite;
             
             Destroy(gameObject);
         }

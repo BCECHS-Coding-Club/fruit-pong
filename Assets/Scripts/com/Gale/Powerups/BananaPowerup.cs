@@ -27,6 +27,9 @@ namespace com.Gale.Powerups
         
         // The maximum amount of times that the banana should hit a paddle before it is removed from active play.
         [SerializeField] private uint maxPaddleHitsBeforeDestroy = 3;
+
+        [Space] [SerializeField] private Sprite ballSprite;
+        
         private uint _paddleHits = 0;
         
         private float _lastHitTime;
@@ -56,6 +59,8 @@ namespace com.Gale.Powerups
             _ballRigidbody = ball.GetComponent<Rigidbody2D>();
             _lastHitTime = Time.fixedTime;
             _hitAngle = _ballRigidbody.velocity.normalized;
+
+            ball.GetComponent<SpriteRenderer>().sprite = ballSprite;
 
             // TODO: Start any animations.
             

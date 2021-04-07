@@ -70,20 +70,6 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
-        // TODO move this to the GlobalState
-        public void OnGoal()
-        {
-            transform.position = Vector3.zero;
-            _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
-
-            var shouldDie = Powerup?.ShouldDieOnGoal();
-            if (shouldDie.GetValueOrDefault(true))
-            {
-                DestroyPowerup();
-            }
-        }
-
-        
         public void DestroyPowerup()
         {
             Powerup = null;
@@ -112,7 +98,6 @@ namespace com.Gale
                 var collidedPowerup = other.gameObject.GetComponent<IPowerup>();
                 collidedPowerup.OnCollectPowerup(this);
                 Powerup = collidedPowerup;
-                Debug.Log("Collided with a powerup!\n" + Powerup);
             }
         }
 
@@ -126,7 +111,7 @@ namespace com.Gale
                 var translation = distance.normal * distance.distance;
                 transform.position += new Vector3(translation.x, translation.y);
             }
-            
+
             var contactCount = other.GetContacts(_collisions);
             
             // DON'T USE _contacts.Clear(), since it doesn't work. You can't foreach the contacts.
@@ -154,6 +139,7 @@ namespace com.Gale
             {
                 // The VERY obvious bug in this is that the powerup may not handle collisions at all.
                 _rigidbody2D.velocity = vectorVal;
+                CalculateSpriteDirection();
                 return;
             }
             
@@ -174,10 +160,18 @@ namespace com.Gale
                     Mathf.Sin(reflectAngle) * reflectVector.magnitude);
 
                 _rigidbody2D.velocity = newReflectVector;
+                CalculateSpriteDirection();
                 return;
             } 
-            // Do normal physics
             _rigidbody2D.velocity = reflectVector;
+            CalculateSpriteDirection();
+        }
+
+        public void CalculateSpriteDirection()
+        {
+            var direction = Mathf.Sign(_rigidbody2D.velocity.normalized.x);
+
+            spriteRenderer.flipX = direction < 0.0f;
         }
 
         // Just used for when the ball gets stuck in a wall.
@@ -204,7 +198,6 @@ namespace com.Gale
             {
                 OnCollisionEnter2D(other);
             }
-
         }
     }
 }

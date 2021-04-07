@@ -98,6 +98,7 @@ MonoBehaviour:
   speed: 10
   degPaddleMaxHitAngle: 45
   maxPaddleHitsBeforeDestroy: 3
+  ballSprite: {fileID: 21300000, guid: f7b30fd2de5182d358c122a3cf3a9f3c, type: 3}
 --- !u!212 &34945317738085898
 SpriteRenderer:
   m_ObjectHideFlags: 0

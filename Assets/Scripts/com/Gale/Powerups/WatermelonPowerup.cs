@@ -45,7 +45,6 @@ namespace com.Gale.Powerups {
             try
             {
                 GetComponent<SpriteRenderer>().enabled = false;
-                
             }
             catch
             {
@@ -54,8 +53,6 @@ namespace com.Gale.Powerups {
 
             // TODO: Start any destroyed animations
             ball.spriteRenderer.sprite = watermelonBallSprite;
-            ball.spriteRenderer.flipX = !(Mathf.Sign(ball.GetComponent<Rigidbody2D>().velocity.x) >= 0);
-
             ball.transform.localScale = watermelonBallTransform;
             
             // FIXME: The ball's box collider doesn't adjust when the scale is adjusted.

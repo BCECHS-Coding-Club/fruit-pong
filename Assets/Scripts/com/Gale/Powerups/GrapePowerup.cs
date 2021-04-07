@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Security.Cryptography;
-using UnityEditor;
 using UnityEngine;
 
 namespace com.Gale.Powerups
@@ -24,7 +22,7 @@ namespace com.Gale.Powerups
         private static GrapePowerup _primaryBall = null;
 
         private Collider2D _collider2D;
-        
+
         private void Start()
         {
             _collider2D = GetComponent<Collider2D>();
@@ -48,8 +46,17 @@ namespace com.Gale.Powerups
         {
             yield return new WaitForSeconds(time);
 
-            if (_primaryBall)
+            if (_primaryBall == this || _primaryBall == null)
             {
+                var grapes = FindObjectsOfType<GrapePowerup>();
+                if (grapes.Length > 0)
+                {
+                    _primaryBall = grapes[0];
+                    Destroy(gameObject);
+                    Destroy(GetComponent<Ball>());
+                    yield return null;
+                }
+                
                 Destroy(GetComponent<GrapePowerup>());
                 try
                 {
@@ -60,7 +67,7 @@ namespace com.Gale.Powerups
                     Debug.Log(e);
                 }
                 yield return null;
-            }
+            } 
 
             Destroy(GetComponent<Ball>());
             Destroy(gameObject);
@@ -83,7 +90,8 @@ namespace com.Gale.Powerups
             for (var i = 0; i < ballSplitCount; i++)
             {
                 var newBall = Instantiate(ballObject, ball.transform.position, transform.rotation);
-                var grapePowerup =  newBall.AddComponent<GrapePowerup>();
+                var grapePowerup = newBall.AddComponent<GrapePowerup>();
+                newBall.GetComponent<Ball>().Powerup = grapePowerup;
                 grapePowerup.SetTimeout(totalAliveTime + aliveTimeVariation * i);
                 if (i == 0) 
                     _primaryBall = grapePowerup;
@@ -102,6 +110,13 @@ namespace com.Gale.Powerups
 
         public bool ShouldDieOnGoal()
         {
+            var powerups = FindObjectsOfType<GrapePowerup>();
+            if (powerups.Length > 0)
+            {
+                _primaryBall = powerups[0];
+                return true;
+            }
+            
             return _primaryBall != this;
         }
 
