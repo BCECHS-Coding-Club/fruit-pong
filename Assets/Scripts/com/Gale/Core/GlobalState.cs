@@ -75,7 +75,12 @@ namespace com.Gale.Core
 
         public void OnPause()
         {
+            // Display the Menu
             StopCoroutine(_randomPowerupCoroutine);
+            
+            // For now, just exit.
+            // TODO don't do this
+            Application.Quit();
         }
 
         public void OnResume()

@@ -95,7 +95,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.5
   maxSpeed: 5
-  gravity: 9.8
+  gravity: 0.2
   maxHitAngleDeg: 85
   paddleHitsUntilDestroyed: 5
 --- !u!212 &5755082508593175982

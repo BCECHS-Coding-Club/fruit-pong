@@ -64,6 +64,13 @@ namespace com.Gale.Player
             _currInput = context.ReadValue<float>();
         }
 
+        public void OnPause(InputAction.CallbackContext context)
+        {
+            FindObjectOfType<GlobalState>().OnPause();
+        }
+
+
+
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Ball")) return;

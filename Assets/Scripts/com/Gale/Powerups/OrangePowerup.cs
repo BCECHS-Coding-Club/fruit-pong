@@ -39,6 +39,18 @@ namespace com.Gale.Powerups
                 if (paddleHitsUntilDestroyed <= _paddleHits)
                 {
                     details.Ball.DestroyPowerup();
+                }
+            }
+
+            return null;
+            
+            // I'm actually not sure if any of this is necessary since it uses the standard collision stuff.
+            if (details.GameObject.CompareTag("Paddle"))
+            {
+                _paddleHits++;
+                if (paddleHitsUntilDestroyed <= _paddleHits)
+                {
+                    details.Ball.DestroyPowerup();
                     return null;
                 }
                 

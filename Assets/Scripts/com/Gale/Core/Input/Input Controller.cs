@@ -27,6 +27,14 @@ namespace com.Gale.Input
                     ""expectedControlType"": ""Dpad"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""6fd27a32-0a19-46d2-bfd7-9184f6bdb934"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -128,6 +136,28 @@ namespace com.Gale.Input
                     ""action"": ""Vertical Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e159090e-b3af-4c9b-9314-019aa8778fe2"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8d8f086-5d66-446c-ad73-b5bea4c11158"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -275,6 +305,7 @@ namespace com.Gale.Input
             // Player 1
             m_Player1 = asset.FindActionMap("Player 1", throwIfNotFound: true);
             m_Player1_VerticalMovement = m_Player1.FindAction("Vertical Movement", throwIfNotFound: true);
+            m_Player1_Pause = m_Player1.FindAction("Pause", throwIfNotFound: true);
             // Player 2
             m_Player2 = asset.FindActionMap("Player 2", throwIfNotFound: true);
             m_Player2_VerticalMovement = m_Player2.FindAction("Vertical Movement", throwIfNotFound: true);
@@ -328,11 +359,13 @@ namespace com.Gale.Input
         private readonly InputActionMap m_Player1;
         private IPlayer1Actions m_Player1ActionsCallbackInterface;
         private readonly InputAction m_Player1_VerticalMovement;
+        private readonly InputAction m_Player1_Pause;
         public struct Player1Actions
         {
             private @InputController m_Wrapper;
             public Player1Actions(@InputController wrapper) { m_Wrapper = wrapper; }
             public InputAction @VerticalMovement => m_Wrapper.m_Player1_VerticalMovement;
+            public InputAction @Pause => m_Wrapper.m_Player1_Pause;
             public InputActionMap Get() { return m_Wrapper.m_Player1; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -345,6 +378,9 @@ namespace com.Gale.Input
                     @VerticalMovement.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnVerticalMovement;
                     @VerticalMovement.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnVerticalMovement;
                     @VerticalMovement.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnVerticalMovement;
+                    @Pause.started -= m_Wrapper.m_Player1ActionsCallbackInterface.OnPause;
+                    @Pause.performed -= m_Wrapper.m_Player1ActionsCallbackInterface.OnPause;
+                    @Pause.canceled -= m_Wrapper.m_Player1ActionsCallbackInterface.OnPause;
                 }
                 m_Wrapper.m_Player1ActionsCallbackInterface = instance;
                 if (instance != null)
@@ -352,6 +388,9 @@ namespace com.Gale.Input
                     @VerticalMovement.started += instance.OnVerticalMovement;
                     @VerticalMovement.performed += instance.OnVerticalMovement;
                     @VerticalMovement.canceled += instance.OnVerticalMovement;
+                    @Pause.started += instance.OnPause;
+                    @Pause.performed += instance.OnPause;
+                    @Pause.canceled += instance.OnPause;
                 }
             }
         }
@@ -410,6 +449,7 @@ namespace com.Gale.Input
         public interface IPlayer1Actions
         {
             void OnVerticalMovement(InputAction.CallbackContext context);
+            void OnPause(InputAction.CallbackContext context);
         }
         public interface IPlayer2Actions
         {
