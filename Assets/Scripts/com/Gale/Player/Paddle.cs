@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using com.Gale.Core;
 using com.Gale.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 
 namespace com.Gale.Player
 {
@@ -38,34 +38,20 @@ namespace com.Gale.Player
         private void Start()
         {
             _collider = GetComponent<Collider2D>();
-        }
+            _inputController = FindObjectOfType<GlobalState>().InputController;
 
-        private void OnEnable()
-        {
-            if (_inputController == null)
+            switch (playerNumber)
             {
-                _inputController = new InputController();
-                
-                switch (playerNumber)
-                {
-                    case PlayerNumber.Player1:
-                        _inputController.Player1.SetCallbacks(this);
-                        break;
-                    case PlayerNumber.Player2:
-                        _inputController.Player2.SetCallbacks(this);
-                        break;
-                    case PlayerNumber.None:
-                    default:
-                        throw new Exception("Did not assign the paddle a player.");
-                }
+                case PlayerNumber.Player1:
+                    _inputController.Player1.SetCallbacks(this);
+                    break;
+                case PlayerNumber.Player2:
+                    _inputController.Player2.SetCallbacks(this);
+                    break;
+                case PlayerNumber.None:
+                default:
+                    throw new Exception("Did not assign the paddle a player.");
             }
-            
-            _inputController.Enable();
-        }
-
-        private void OnDisable()
-        {
-            _inputController?.Disable();
         }
 
         private void FixedUpdate()
@@ -73,13 +59,6 @@ namespace com.Gale.Player
             transform.position += new Vector3(0, _currInput * speed);
         }
 
-        /*
-        private void OnCollisionEnter2D(Collision2D other)
-        {
-            // Collide with objects
-            throw new NotImplementedException();
-        }
-        */
         public void OnVerticalMovement(InputAction.CallbackContext context)
         {
             _currInput = context.ReadValue<float>();

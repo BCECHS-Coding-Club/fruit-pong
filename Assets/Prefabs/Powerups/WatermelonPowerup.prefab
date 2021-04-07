@@ -96,7 +96,10 @@ MonoBehaviour:
   speed: 1.05
   maxSpeed: 5
   acceleration: 0.166
+  watermelonBallSprite: {fileID: 21300000, guid: 2f10fb8eb2f9c7a88a4c8e7db931cbd1,
+    type: 3}
   collider2D: {fileID: 5543545551483926899}
+  watermelonBallTransform: {x: 1, y: 1, z: 1}
 --- !u!212 &5204841763030045160
 SpriteRenderer:
   m_ObjectHideFlags: 0

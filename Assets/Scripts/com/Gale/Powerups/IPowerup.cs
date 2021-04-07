@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using com.Gale.Player;
 using UnityEngine;
 
 namespace com.Gale.Powerups
@@ -20,8 +18,8 @@ namespace com.Gale.Powerups
         void OnCollectPowerup(Ball ball);
         // Called whenever the ball collides with anything when the powerup is attached to it.
         Vector2? OnBallCollision(BallCollisionDetails details);
-        
-        // TODO
-        // void OnBallReset();
+
+        // Returns whether the powerup should die on goal.
+        bool ShouldDieOnGoal();
     }
 }

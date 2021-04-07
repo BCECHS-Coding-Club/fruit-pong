@@ -59,5 +59,10 @@ namespace com.Gale.Powerups
             var reflectVector = Vector2.Reflect(_rigidbody2D.velocity,  details.AggregateNormal);
             return reflectVector;
         }
+
+        public bool ShouldDieOnGoal()
+        {
+            return false;
+        }
     }
 }

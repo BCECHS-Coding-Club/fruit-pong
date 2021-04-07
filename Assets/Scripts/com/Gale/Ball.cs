@@ -9,7 +9,8 @@ using Random = UnityEngine.Random;
 namespace com.Gale
 {
     [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(CircleCollider2D))]
+    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(SpriteRenderer))]
     public class Ball : MonoBehaviour
     {
         
@@ -20,19 +21,28 @@ namespace com.Gale
 
         public IPowerup Powerup { get;  set; }
 
+        public Sprite defaultBallSprite;
+        public SpriteRenderer spriteRenderer;
+       
+        // Quick hack to fixing the ball's scale on DestroyPowerup().
+        [SerializeField] private Vector3 ballScale = new Vector3(0.5f, 0.5f, 1.0f);
+
         private Rigidbody2D _rigidbody2D;
-        private CircleCollider2D _circleCollider2D;
+        private Collider2D _collider2D;
 
         private List<ContactPoint2D> _collisions = new List<ContactPoint2D>();
+
+        private GameObject _lastCollidedObject;
 
         private void Awake()
         {
             _rigidbody2D = GetComponent<Rigidbody2D>();
-            _circleCollider2D = GetComponent<CircleCollider2D>();
+            _collider2D = GetComponent<Collider2D>();
         }
 
         private void Start()
         {
+            spriteRenderer = GetComponent<SpriteRenderer>();
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
@@ -41,16 +51,27 @@ namespace com.Gale
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
         }
 
+        // TODO move this to the GlobalState
         public void OnGoal()
         {
             transform.position = Vector3.zero;
             _rigidbody2D.velocity = Random.insideUnitCircle.normalized * speed;
-            Powerup = null;
+
+            var shouldDie = Powerup?.ShouldDieOnGoal();
+            if (shouldDie.GetValueOrDefault(true))
+            {
+                DestroyPowerup();
+            }
         }
 
         public void DestroyPowerup()
         {
             Powerup = null;
+            
+            // Reset sprite
+            spriteRenderer.sprite = defaultBallSprite;
+
+            transform.localScale = ballScale;
         }
 
         private void FixedUpdate()
@@ -82,13 +103,13 @@ namespace com.Gale
 
         private void OnCollisionEnter2D(Collision2D other)
         {
+            _lastCollidedObject = other.gameObject;
         
             // Maybe make this an array?
             // For some reason clearing the list doesn't actually do anything.
             // _collisions.Clear();
             var contactCount = other.GetContacts(_collisions);
             
-            // TODO: This should probably just be given to the function.
             var aggregateNormal = Vector2.zero;
             for (var i = 0; i < contactCount; i++)
             {
@@ -97,7 +118,6 @@ namespace com.Gale
 
             var contactPoint2Ds = _collisions.Take(contactCount).ToArray();
 
-            // TODO: Put all the relevant information inside of a struct so there isn't unnecessary copying.
             var vector = Powerup?.OnBallCollision(new BallCollisionDetails
             {
                 AggregateNormal = aggregateNormal,
@@ -142,11 +162,24 @@ namespace com.Gale
         // Just used for when the ball gets stuck in a wall.
         private void OnCollisionStay2D(Collision2D other)
         {
-            var distance = _circleCollider2D.Distance(other.collider);
+            var distance = _collider2D.Distance(other.collider);
             if (!distance.isOverlapped) return;
             
             var translation = distance.distance * distance.normal;
             transform.position += new Vector3(translation.x, translation.y);
+
+            var newDistance = _collider2D.Distance(other.collider);
+            if (!newDistance.isOverlapped) return;
+            
+            // In case the ball doesn't reflect off the wall.
+            if (_lastCollidedObject == other.gameObject)
+            {
+                OnCollisionEnter2D(other);
+            }
+            else
+            {
+                _lastCollidedObject = other.gameObject;
+            }
         }
     }
 }

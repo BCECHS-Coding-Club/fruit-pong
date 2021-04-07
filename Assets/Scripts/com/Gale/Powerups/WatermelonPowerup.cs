@@ -13,9 +13,14 @@ namespace com.Gale.Powerups {
         public float speed = 1.05f;
         public float maxSpeed = 2f;
         public float acceleration = 1.05f;
+
+        public Sprite watermelonBallSprite;
             
         [SerializeField]
         private Collider2D collider2D;
+
+        // The amount that we scale the ball on contact.
+        [SerializeField] private Vector3 watermelonBallTransform = new Vector3(2.0f, 2.0f, 1.0f);
 
         private void Start()
         {
@@ -39,15 +44,22 @@ namespace com.Gale.Powerups {
             _hasTouchedFloor = false;
             try
             {
-                GetComponent<MeshRenderer>().enabled = false;
+                GetComponent<SpriteRenderer>().enabled = false;
+                
             }
             catch
             {
                 // ignored
             }
 
-            // TODO: Start any destroyed animations.
+            // TODO: Start any destroyed animations
+            ball.spriteRenderer.sprite = watermelonBallSprite;
+            ball.spriteRenderer.flipX = !(Mathf.Sign(ball.GetComponent<Rigidbody2D>().velocity.x) >= 0);
+
+            ball.transform.localScale = watermelonBallTransform;
             
+            // FIXME: The ball's box collider doesn't adjust when the scale is adjusted.
+
             Destroy(gameObject);
         }
 
@@ -78,6 +90,11 @@ namespace com.Gale.Powerups {
             }
             
             return null;
+        }
+
+        public bool ShouldDieOnGoal()
+        {
+            return false;
         }
 
         // END: IPowerup interface functions

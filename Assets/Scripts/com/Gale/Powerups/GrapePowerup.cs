@@ -21,7 +21,7 @@ namespace com.Gale.Powerups
         public float totalAliveTime = 10f;
         public float aliveTimeVariation = 0.5f;
 
-        public bool isPrimaryBall = false;
+        private static GrapePowerup _primaryBall = null;
 
         private Collider2D _collider2D;
         
@@ -35,14 +35,30 @@ namespace com.Gale.Powerups
             StartCoroutine(KillSelf(secs));
         }
 
+        private void OnDestroy()
+        {
+            if (_primaryBall == this)
+            {
+                _primaryBall = null;
+            }
+        }
+
         // ReSharper disable Unity.PerformanceAnalysis
         private IEnumerator KillSelf(float time)
         {
             yield return new WaitForSeconds(time);
 
-            if (isPrimaryBall)
+            if (_primaryBall)
             {
                 Destroy(GetComponent<GrapePowerup>());
+                try
+                {
+                    GetComponent<Ball>().DestroyPowerup();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e);
+                }
                 yield return null;
             }
 
@@ -69,8 +85,8 @@ namespace com.Gale.Powerups
                 var newBall = Instantiate(ballObject, ball.transform.position, transform.rotation);
                 var grapePowerup =  newBall.AddComponent<GrapePowerup>();
                 grapePowerup.SetTimeout(totalAliveTime + aliveTimeVariation * i);
-                if (i != 0) 
-                    grapePowerup.isPrimaryBall = true;
+                if (i == 0) 
+                    _primaryBall = grapePowerup;
                 
                 newBall.GetComponent<Ball>()?.ChangeToRandomVelocity();
             }
@@ -84,6 +100,11 @@ namespace com.Gale.Powerups
             return null;
         }
 
+        public bool ShouldDieOnGoal()
+        {
+            return _primaryBall != this;
+        }
+
         private void OnCollisionEnter2D(Collision2D other)
         {
             if (other.gameObject.CompareTag("Paddle"))
@@ -95,8 +116,14 @@ namespace com.Gale.Powerups
             {
                 var ball = GetComponent<Ball>();
                 ball.DestroyPowerup();
-                Destroy(ball.gameObject);
-                Destroy(gameObject);
+                if (this != _primaryBall)
+                {
+                    Destroy(ball.gameObject);
+                    Destroy(gameObject);
+                } else if (_primaryBall == null)
+                {
+                    _primaryBall = this;
+                }
             }
         }
     }

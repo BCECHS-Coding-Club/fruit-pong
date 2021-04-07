@@ -94,6 +94,10 @@ namespace com.Gale.Powerups
 
             return _hitAngle * _ballRigidbody.velocity.magnitude;
         }
-        
+
+        public bool ShouldDieOnGoal()
+        {
+            return false;
+        }
     }
 }
